@@ -38,7 +38,7 @@ def load_cache():
         if is_running_in_github_actions():
             workflow_status, completed_run_ids = get_latest_workflow_status()
             
-            delete_completed_workflows(completed_run_ids)
+            # delete_completed_workflows(completed_run_ids)
 
             if workflow_status == 'success':
                 if os.path.exists(CACHE_FILE):
@@ -97,11 +97,11 @@ def extract_list_ids(rule):
     return set(ids_pattern.findall(rule['traffic']))
 
 
-def delete_completed_workflows(completed_run_ids):
-    if completed_run_ids:
-        for run_id in completed_run_ids:
-            delete_url = f"/repos/{GithubAPI.GITHUB_REPOSITORY}/actions/runs/{run_id}"
-            GithubAPI.delete(delete_url)
+# def delete_completed_workflows(completed_run_ids):
+#     if completed_run_ids:
+#         for run_id in completed_run_ids:
+#             delete_url = f"/repos/{GithubAPI.GITHUB_REPOSITORY}/actions/runs/{run_id}"
+#             GithubAPI.delete(delete_url)
 
 
 def get_latest_workflow_status():
@@ -129,5 +129,5 @@ def delete_cache(completed_run_ids=None):
     for cache_id in [cache['id'] for cache in caches]:
         GithubAPI.delete(f"{CACHE_URL}/{cache_id}")
 
-    if completed_run_ids:
-        delete_completed_workflows(completed_run_ids)
+    # if completed_run_ids:
+    #     delete_completed_workflows(completed_run_ids)
