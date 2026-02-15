@@ -14,9 +14,20 @@ class CloudflareManager:
         self.cache = utils.load_cache()
 
     def update_resources(self):
-        domains_to_block = DomainConverter().process_urls()
+        domains_to_block = []
+
+        # Process each URL and handle errors individually
+        for url in DomainConverter().process_urls():
+            try:  # Added try block for individual URL processing
+                # Assuming `url` is being processed here
+                domains_to_block.append(url)
+            except Exception as e:  # Added exception handling for individual URL errors
+                error(f"Failed to process URL '{url}': {e}")  # Log the error for that URL
+                continue  # Added to skip to the next URL on error
+
         if len(domains_to_block) > 300000:
             error("The domains list exceeds Cloudflare Gateway's free limit of 300,000 domains.")
+            return  # Stop further processing if too many domains
         
         current_lists = utils.get_current_lists(self.cache, self.list_name)
         current_rules = utils.get_current_rules(self.cache, self.rule_name)
